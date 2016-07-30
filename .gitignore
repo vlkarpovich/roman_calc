@@ -1,0 +1,8 @@
+libroman_calc.a
+*.o
+Makefile~
+README~
+src/main.c~
+src/roman_calc.c~
+src/roman_calc.h~
+tests/check_roman_calc.c~

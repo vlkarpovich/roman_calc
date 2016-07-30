@@ -1,0 +1,13 @@
+This is Roman Numerical Calculator the check test framework example.
+
+You need the following programs installed on your system:
+	 -- Check
+
+To build:
+
+$ make
+
+To run:
+roman_calc [roman number] +|- [roman number]
+
+
