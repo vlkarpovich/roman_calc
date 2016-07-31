@@ -28,19 +28,28 @@ START_TEST (test_roman_number_check)
   ck_assert_int_eq (roman_number_check ("XIIII"), ERROR);
   /* Test for more than 1 V,L,D in a row */
   ck_assert_int_eq (roman_number_check ("VV"), ERROR);
-  /* Test to a wrong symbol */
+  /* Test for a wrong symbol */
   ck_assert_int_eq (roman_number_check ("12MIXI"), ERROR);
-  /* Test to a wrong prefix */
+  /* Test for a wrong prefix */
   ck_assert_int_eq (roman_number_check ("CCID"), ERROR);
   ck_assert_int_eq (roman_number_check ("CCDXXL"), ERROR);
-  /* Test to prefix and postfix at the same time */
+  /* Test fot a prefix and a postfix at the same time */
   ck_assert_int_eq (roman_number_check ("CCDXLX"), ERROR);
 }
 END_TEST
 
 START_TEST (test_roman_number_add)
 {
-  ck_assert_str_eq (roman_number_add ("I", "I", result), "II");
+  /* Simple test */
+  ck_assert_str_eq (roman_number_add ("XIV", "LX", result), "LXXIV");
+  /* If the numeral is I,X or C you can't have more than three */	
+  ck_assert_str_eq (roman_number_add ("II", "II", result), "IV");
+  /* If the numeral is V, L or D you can't have more than one */
+  ck_assert_str_eq (roman_number_add ("D", "D", result), "M");
+  /* Add large numbers */
+  ck_assert_str_eq (roman_number_add ("MDCCXLIII", "MCIX", result), "MMDCCCLII");
+  /* The result is bigger than Romans can count */
+  ck_assert_str_eq (roman_number_add ("MDCCXLIII", "MDCCXLIII", result), INFINITY);
 }
 END_TEST
 
