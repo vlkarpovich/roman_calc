@@ -19,9 +19,22 @@ teardown (void)
 
 START_TEST (test_roman_number_check)
 {
-  ck_assert_int_eq (roman_number_check ("MIX"), SUCCESS);
-  ck_assert_int_eq (roman_number_check ("MIXI"), ERROR);
+  /* Test for all correct symbals */
+  ck_assert_int_eq (roman_number_check ("MDCLXVI"), SUCCESS);
+  /* Test for a long number */
+  ck_assert_int_eq (roman_number_check ("MMMDCCCLXXXVIII"), SUCCESS);
+  ck_assert_int_eq (roman_number_check ("MMMCDLXXXIV"), SUCCESS);
+  /* Test for more than 3 symbols in a row */
+  ck_assert_int_eq (roman_number_check ("XIIII"), ERROR);
+  /* Test for more than 1 V,L,D in a row */
+  ck_assert_int_eq (roman_number_check ("VV"), ERROR);
+  /* Test to a wrong symbol */
   ck_assert_int_eq (roman_number_check ("12MIXI"), ERROR);
+  /* Test to a wrong prefix */
+  ck_assert_int_eq (roman_number_check ("CCID"), ERROR);
+  ck_assert_int_eq (roman_number_check ("CCDXXL"), ERROR);
+  /* Test to prefix and postfix at the same time */
+  ck_assert_int_eq (roman_number_check ("CCDXLX"), ERROR);
 }
 END_TEST
 
