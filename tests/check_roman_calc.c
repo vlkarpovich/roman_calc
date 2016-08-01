@@ -56,13 +56,22 @@ END_TEST
 
 START_TEST (test_roman_number_sub)
 {
+  /* Simple test */
   ck_assert_str_eq (roman_number_sub ("II", "I", result), "I");
+  /* Subtract small from large number */
+  ck_assert_str_eq (roman_number_sub ("MMM", "I", result), "MMCMXCIX");
+  /* Subtract large number */
+  ck_assert_str_eq (roman_number_sub ("MMDCCXLIII", "MCCXLIX", result), "MCDXCIV");
+  /* Get negative result */
+  ck_assert_str_eq (roman_number_sub ("XIX", "CXC", result), NEGATIVE);
+
 }
 END_TEST
 
 START_TEST (test_roman_number_sub_nulla)
 {
   ck_assert_str_eq (roman_number_sub ("III", "III", result), ZERO);
+  ck_assert_str_eq (roman_number_sub ("MCMXCIV", "MCMXCIV", result), ZERO);
 }
 END_TEST
 
