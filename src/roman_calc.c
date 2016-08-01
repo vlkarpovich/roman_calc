@@ -5,6 +5,8 @@
 #include "roman_calc.h"
 
 static char RomanSymbols[] = "IVXLCDM";
+#define SYMBOL_ONE(level)  RomanSymbols[(level)*2]
+#define SYMBOL_FIVE(level)  RomanSymbols[(level)*2+1]
 
 int
 get_rank (char symbol)
@@ -14,6 +16,21 @@ get_rank (char symbol)
     if (symbol == RomanSymbols[i])
       return (i + 1);
   return 0;
+}
+
+int
+get_char (char rank)
+{
+  return (RomanSymbols[rank - 1]);
+}
+
+void
+resize_string (char *str, int size)
+{
+  if (size > 0)
+    memmove (str + size, str, strlen (str) + 1);
+  else
+    memmove (str, str - size, strlen (str) + 1);
 }
 
 int
@@ -73,8 +90,193 @@ roman_number_check (char *r_num)
 }
 
 char *
+find_token_end (char *in, int level)
+{
+  char pattern[4];
+  char *end;
+  if (level)
+    {
+      pattern[0] = RomanSymbols[level * 2];
+      pattern[1] = RomanSymbols[level * 2 + 1];
+      pattern[2] = RomanSymbols[(level + 1) * 2];
+      pattern[3] = 0;
+      end = in + strspn (in, pattern);
+    }
+  else
+    end = in + strlen (in);
+  return end;
+}
+
+void
+get_token (char *in, char *out, int level)
+{
+  char pattern[3];
+  char *start = NULL;
+  char *end = NULL;
+  int size = 0;
+  pattern[0] = SYMBOL_ONE (level);
+  pattern[1] = SYMBOL_FIVE (level);
+  pattern[2] = 0;
+/* Find the start */
+  start = strpbrk (in, pattern);
+  if (start)
+    {
+      if ((in != start) && (*(start - 1) == SYMBOL_ONE (level - 1)))
+	{
+/* lower level with prefix */
+	  *out = 0;
+	}
+      else
+	{
+/* Find the end */
+	  end = find_token_end (start, level);
+	  size = end - start;
+
+	  strncpy (out, start, size);
+
+	  out[size] = 0;
+	}
+    }
+  else
+    *out = 0;
+}
+
+int
+add_token (char *result, char *in, int level)
+{
+  int num_pre = 0;
+  int num_1 = 0;
+  char *end;
+  char *c;
+  char prev = 0;
+  int i;
+
+  end = find_token_end (result, level);
+  for (c = result; c != end; c++)
+    {
+      if (*c == SYMBOL_ONE (level))
+	num_1++;
+      if (*c == SYMBOL_FIVE (level))
+	{
+	  num_1 += 5;
+	  if (prev == SYMBOL_ONE (level))
+	    {
+	      num_pre++;
+	      num_1--;
+	    }
+	}
+
+      if (*c == SYMBOL_ONE (level + 1))
+	{
+	  num_1 += 10;
+	  if (prev == SYMBOL_ONE (level))
+	    {
+	      num_pre++;
+	      num_1--;
+	    }
+	}
+      prev = *c;
+    }
+
+  prev = 0;
+  for (c = in; *c != 0; c++)
+    {
+      if (*c == SYMBOL_ONE (level))
+	num_1++;
+      if (*c == SYMBOL_FIVE (level))
+	{
+	  num_1 += 5;
+	  if (prev == SYMBOL_ONE (level))
+	    {
+	      num_pre++;
+	      num_1--;
+	    }
+	}
+      if (*c == SYMBOL_ONE (level + 1))
+	{
+	  num_1 += 10;
+	  if (prev == SYMBOL_ONE (level))
+	    {
+	      num_pre++;
+	      num_1--;
+	    }
+	}
+      prev = *c;
+    }
+  num_1 -= num_pre;
+
+  if ((SYMBOL_ONE (level) == 'M') && (num_1 > 3))
+    {
+      strcpy (result, INFINITY);
+      return ERROR;
+    }
+/* clear this level in result */
+  c = result;
+  resize_string (result, result - end);
+/* get number of 10s */
+  num_pre = num_1 / 10;
+  for (i = 0; i < num_pre; i++)
+    {
+      resize_string (result, 1);
+      *result = SYMBOL_ONE (level + 1);
+    }
+  result += num_pre;
+
+  num_1 = num_1 % 10;
+  if (num_1 == 9)
+    {
+      resize_string (result, 2);
+      *result = SYMBOL_ONE (level);
+      *(result + 1) = SYMBOL_ONE (level+1);
+    }
+  else {
+   if (num_1 / 5)
+    {
+      resize_string (result, 1);
+      *result = SYMBOL_FIVE (level);
+      result++;
+    }
+  num_1 = num_1 % 5;
+  if (num_1 == 4)
+    {
+      resize_string (result, 2);
+      *result = SYMBOL_ONE (level);
+      *(result + 1) = SYMBOL_FIVE (level);
+    }
+  else
+    {
+      for (i = 0; i < num_1; i++)
+	{
+	  resize_string (result, 1);
+	  *result = SYMBOL_ONE (level);
+	}
+    }
+ }
+  return SUCCESS;
+}
+
+char *
 roman_number_add (char *r_num_1, char *r_num_2, char *result)
 {
+  int i;
+  char token[16];
+
+  if (!r_num_1 || !r_num_2 || !result)
+    return NULL;
+  *token = 0;
+  *result = 0;
+  for (i = 0; i <= strlen (RomanSymbols) / 2; i++)
+    {
+      get_token (r_num_1, token, i);
+      if (add_token (result, token, i) == ERROR)
+	break;
+      *token = 0;
+      get_token (r_num_2, token, i);
+      if (add_token (result, token, i) == ERROR)
+	break;
+
+    }
+
   return result;
 }
 

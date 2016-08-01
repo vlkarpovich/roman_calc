@@ -42,6 +42,7 @@ START_TEST (test_roman_number_add)
 {
   /* Simple test */
   ck_assert_str_eq (roman_number_add ("XIV", "LX", result), "LXXIV");
+  ck_assert_str_eq (roman_number_add ("XIX", "CXC", result), "CCIX");
   /* If the numeral is I,X or C you can't have more than three */	
   ck_assert_str_eq (roman_number_add ("II", "II", result), "IV");
   /* If the numeral is V, L or D you can't have more than one */
@@ -49,7 +50,7 @@ START_TEST (test_roman_number_add)
   /* Add large numbers */
   ck_assert_str_eq (roman_number_add ("MDCCXLIII", "MCIX", result), "MMDCCCLII");
   /* The result is bigger than Romans can count */
-  ck_assert_str_eq (roman_number_add ("MDCCXLIII", "MDCCXLIII", result), INFINITY);
+  ck_assert_str_eq (roman_number_add ("MMDCCXLIII", "MDCCXLIII", result), INFINITY);
 }
 END_TEST
 
