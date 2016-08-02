@@ -5,6 +5,7 @@
 #include "roman_calc.h"
 
 static char RomanSymbols[] = "IVXLCDM";
+#define ROMAN_SYMBOLS_NUM  7
 #define SYMBOL_ONE(level)  RomanSymbols[(level)*2]
 #define SYMBOL_FIVE(level)  RomanSymbols[(level)*2+1]
 
@@ -98,9 +99,9 @@ find_token_end (char *in, int level)
   char *end;
   if (level)
     {
-      pattern[0] = RomanSymbols[level * 2];
-      pattern[1] = RomanSymbols[level * 2 + 1];
-      pattern[2] = RomanSymbols[(level + 1) * 2];
+      pattern[0] = SYMBOL_ONE (level);
+      pattern[1] = SYMBOL_FIVE (level);
+      pattern[2] = SYMBOL_ONE (level + 1);
       pattern[3] = 0;
       end = in + strspn (in, pattern);
     }
@@ -322,7 +323,7 @@ roman_number_add (char *r_num_1, char *r_num_2, char *result)
     return NULL;
   *token = 0;
   *result = 0;
-  for (i = 0; i <= strlen (RomanSymbols) / 2; i++)
+  for (i = 0; i <= ROMAN_SYMBOLS_NUM / 2; i++)
     {
       get_token (r_num_1, token, i);
       if (add_token (result, token, i) == ERROR)
@@ -349,7 +350,7 @@ roman_number_sub (char *r_num_1, char *r_num_2, char *result)
   *token = 0;
   *result = 0;
 
-  for (i = 0; i <= strlen (RomanSymbols) / 2; i++)
+  for (i = 0; i <= ROMAN_SYMBOLS_NUM / 2; i++)
     {
       get_token (r_num_1, token, i);
       if (add_token (result, token, i) == ERROR)
