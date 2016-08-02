@@ -181,25 +181,10 @@ count_token_value (char *in, int size, int level)
 }
 
 int
-add_token (char *result, char *in, int level)
+counter_to_roman (char *result, int counter, int level)
 {
   int tmp = 0;
-  int counter = 0;
-  char *end;
   int i;
-
-  end = find_token_end (result, level);
-  counter = count_token_value (result, end - result, level);
-  counter += count_token_value (in, strlen (in), level);
-
-  if ((SYMBOL_ONE (level) == 'M') && (counter > 3))
-    {
-      strcpy (result, INFINITY);
-      return ERROR;
-    }
-/* clear this level in result */
-
-  resize_string (result, result - end);
 /* get number of 10s */
   tmp = counter / 10;
   for (i = 0; i < tmp; i++)
@@ -244,6 +229,30 @@ add_token (char *result, char *in, int level)
 }
 
 int
+add_token (char *result, char *in, int level)
+{
+//  int tmp = 0;
+  int counter = 0;
+  char *end;
+//  int i;
+
+  end = find_token_end (result, level);
+  counter = count_token_value (result, end - result, level);
+  counter += count_token_value (in, strlen (in), level);
+
+  if ((SYMBOL_ONE (level) == 'M') && (counter > 3))
+    {
+      strcpy (result, INFINITY);
+      return ERROR;
+    }
+/* remove symbols of current level from the result string */
+
+  resize_string (result, result - end);
+
+  return (counter_to_roman (result, counter, level));
+}
+
+int
 sub_token (char *result, char *in, char *next, int level)
 {
   int tmp = 0;
@@ -267,50 +276,10 @@ sub_token (char *result, char *in, char *next, int level)
   else if (*next != SYMBOL_ONE (level + 1))
     *next = 0;
 
-/* clear this level in result */
+/* remove symbols of current level from the result string */
   resize_string (result, result - end);
-/* get number of 10s */
-  tmp = counter / 10;
-  for (i = 0; i < tmp; i++)
-    {
-      resize_string (result, 1);
-      *result = SYMBOL_ONE (level + 1);
-    }
-  result += tmp;
+  return (counter_to_roman (result, counter, level));
 
-  counter = counter % 10;
-  if (counter == 9)
-    {
-      resize_string (result, 2);
-      *result = SYMBOL_ONE (level);
-      *(result + 1) = SYMBOL_ONE (level + 1);
-    }
-  else
-    {
-      if (counter / 5)
-	{
-	  resize_string (result, 1);
-	  *result = SYMBOL_FIVE (level);
-	  result++;
-	}
-      counter = counter % 5;
-      if (counter == 4)
-	{
-	  resize_string (result, 2);
-	  *result = SYMBOL_ONE (level);
-	  *(result + 1) = SYMBOL_FIVE (level);
-	}
-      else
-	{
-	  for (i = 0; i < counter; i++)
-	    {
-	      resize_string (result, 1);
-	      *result = SYMBOL_ONE (level);
-	    }
-	}
-    }
-
-  return SUCCESS;
 }
 
 char *
