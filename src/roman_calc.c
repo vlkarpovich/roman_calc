@@ -45,36 +45,46 @@ roman_number_check (char *r_num)
   if (!r_num)
     return ERROR;
 
+  /* start checking from right to left */
   c = r_num + (strlen (r_num) - 1);
 
   do
     {
-      /* Check for I,V,X,L,C,D & M character */
+      /* Get sequnce number ( rank) in RomanSymbols list and
+         check for valid characters (I,V,X,L,C,D & M ) at the same time */
       rank = get_rank (*c);
-
       if (!rank)
 	return ERROR;
+      /* Previous and current symbols are the same */
       if (rank == current_rank)
 	{
-	  /* V,L,D can not be 2 in a row */
+	  /* no more than 1 even rank symbol (V,L,D) in a row */
 	  if (rank % 2 == 0)
 	    return ERROR;
+	  /* increase postfix counter */
 	  postfix++;
+	  /* no more than 3 odd rank symbol (I,X,C,M) in a row */
 	  if (postfix == 3)
 	    return ERROR;
 	}
+      /* Rank of the current symbol is smaller than previos one.
+         It must be a prefix */
       else if (rank < current_rank)
 	{
-	  /* No prefix and postfix at the same time and no more than 1 prefix */
+	  /* Check if prefix or postfix is already set.
+	     If the prefix set it will second time.
+	     If the postfix is not zero than it is prefix and postfix at the same time */
 	  if (postfix || prefix)
 	    return ERROR;
-	  /* V,L,D can not be before higher number */
+	  /* V,L,D can not be a prefix */
 	  if (rank % 2 == 0)
 	    return ERROR;
-	  /* The prefix can only have odd rank by 1 step lower */
+	  /* The prefix can only have odd rank by 1 step lower
+	     CM  is OK , XM is not valid */
 	  if ((rank / 2 + 1) != (current_rank / 2))
 	    return ERROR;
-	  /* V,L,D can not be after number with a prefix */
+	  /* Symbol with even rank(V,L,D) can not follow a symbol with trefix in the same range
+	     CMV is OK, CMD is not valid */
 	  if (strchr (c + 2, get_char (rank + 1)))
 	    return ERROR;
 	  prefix = 1;
@@ -86,11 +96,14 @@ roman_number_check (char *r_num)
 	  prefix = 0;
 	  current_rank = rank;
 	}
-
     }
   while (c-- != r_num);
   return SUCCESS;
 }
+
+/* Walk a string to find the end of the symbols sequnce in a range ( level )
+  for example find the first symbol after  C,D & M in MDCXIV  = XIV
+*/
 
 char *
 find_token_end (char *in, int level)
@@ -110,6 +123,9 @@ find_token_end (char *in, int level)
   return end;
 }
 
+/* Find a substring (token) with symbols in the range (level) in a string.
+   Place the token in the out string.
+*/
 void
 get_token (char *in, char *out, int level)
 {
@@ -120,7 +136,7 @@ get_token (char *in, char *out, int level)
   pattern[0] = SYMBOL_ONE (level);
   pattern[1] = SYMBOL_FIVE (level);
   pattern[2] = 0;
-/* Find the start */
+/* Search the input for first appearance of 1 & 5 symbols */
   start = strpbrk (in, pattern);
   if (start)
     {
@@ -144,6 +160,12 @@ get_token (char *in, char *out, int level)
     *out = 0;
 }
 
+/* Count value of the token.
+   Add 1 for an odd rank postfix,
+   Add 5 for an even rank
+   Add 10 for an odd rank+1 symbol
+   Subtract for prefix.
+*/
 int
 count_token_value (char *in, int size, int level)
 {
@@ -180,6 +202,9 @@ count_token_value (char *in, int size, int level)
   return (counter - prefix);
 }
 
+/* Convert token value to a roman symbol sequence.
+  Place it in the result string
+*/
 int
 counter_to_roman (char *result, int counter, int level)
 {
@@ -228,30 +253,34 @@ counter_to_roman (char *result, int counter, int level)
   return SUCCESS;
 }
 
+/* Add a token to a string with Roman numerical
+*/
 int
 add_token (char *result, char *in, int level)
 {
-//  int tmp = 0;
   int counter = 0;
   char *end;
-//  int i;
 
+  /* Find end of a token in accomulator ( result ) */
   end = find_token_end (result, level);
+  /* Calculate value of the token in accomulator */
   counter = count_token_value (result, end - result, level);
+  /* Calculate value of second token and add it to the counter */
   counter += count_token_value (in, strlen (in), level);
-
+  /* Handle an overload problem. Retirn infinity value */
   if ((SYMBOL_ONE (level) == 'M') && (counter > 3))
     {
       strcpy (result, INFINITY);
       return ERROR;
     }
-/* remove symbols of current level from the result string */
-
+  /* Remove symbols in current range level from the accomulator string */
   resize_string (result, result - end);
-
+  /* Convert counter to Roman symbols and add them to the accomulator */
   return (counter_to_roman (result, counter, level));
 }
 
+/* Subtract a token from a string with Roman numerical
+*/
 int
 sub_token (char *result, char *in, char *next, int level)
 {
@@ -259,12 +288,16 @@ sub_token (char *result, char *in, char *next, int level)
   int counter = 0;
   char *end;
   int i;
+  /* Find end of a token in accomulator */
   end = find_token_end (result, level);
+  /* Calculate value of the token in accomulator */
   counter = count_token_value (result, end - result, level);
+  /* Calculate value of second token and subtract it from the counter */
   counter -= count_token_value (in, strlen (in), level);
 
   if (counter < 0)
     {
+      /* Handle negative value. Set NEGATIVE word in the result and return error */
       if (SYMBOL_ONE (level) == 'M')
 	{
 	  strcpy (result, NEGATIVE);
@@ -276,12 +309,18 @@ sub_token (char *result, char *in, char *next, int level)
   else if (*next != SYMBOL_ONE (level + 1))
     *next = 0;
 
-/* remove symbols of current level from the result string */
+  /* Remove symbols in current range level from the accomulator string */
   resize_string (result, result - end);
+  /* Convert counter to Roman symbols and add them to the accomulator */
   return (counter_to_roman (result, counter, level));
 
 }
 
+/* Addition of 2 string with roman numerical.
+ The function splits the number in tokens containing symbols responsible
+ for the same value range, aka 1,10,100 and 1000.
+ Then it adds token one by one.
+*/
 char *
 roman_number_add (char *r_num_1, char *r_num_2, char *result)
 {
@@ -301,12 +340,15 @@ roman_number_add (char *r_num_1, char *r_num_2, char *result)
       get_token (r_num_2, token, i);
       if (add_token (result, token, i) == ERROR)
 	break;
-
     }
-
   return result;
 }
 
+/* Subtraction of a string with roman numerical from other string.
+ The function splits the number in tokens containing symbols responsible
+ for the same value range, aka 1,10,100 and 1000.
+ Then it subtracts tokens one by one.
+*/
 char *
 roman_number_sub (char *r_num_1, char *r_num_2, char *result)
 {
@@ -333,6 +375,7 @@ roman_number_sub (char *r_num_1, char *r_num_2, char *result)
 	break;
 
     }
+  /* Handle 0 value. Set ZERO word in the result */
   if (*result == 0)
     strcpy (result, ZERO);
   return result;
