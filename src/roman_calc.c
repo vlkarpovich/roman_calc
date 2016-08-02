@@ -144,68 +144,52 @@ get_token (char *in, char *out, int level)
 }
 
 int
-add_token (char *result, char *in, int level)
+count_token_value (char *in, int size, int level)
 {
-  int prefix = 0;
-  int counter = 0;
-  char *end;
   char *c;
   char prev = 0;
+  int counter = 0;
+  int prefix = 0;
+
+  for (c = in; c < in + size; c++)
+    {
+      if (*c == SYMBOL_ONE (level))
+	counter++;
+      if (*c == SYMBOL_FIVE (level))
+	{
+	  counter += 5;
+	  if (prev == SYMBOL_ONE (level))
+	    {
+	      prefix++;
+	      counter--;
+	    }
+	}
+
+      if (*c == SYMBOL_ONE (level + 1))
+	{
+	  counter += 10;
+	  if (prev == SYMBOL_ONE (level))
+	    {
+	      prefix++;
+	      counter--;
+	    }
+	}
+      prev = *c;
+    }
+  return (counter - prefix);
+}
+
+int
+add_token (char *result, char *in, int level)
+{
+  int tmp = 0;
+  int counter = 0;
+  char *end;
   int i;
 
   end = find_token_end (result, level);
-  for (c = result; c != end; c++)
-    {
-      if (*c == SYMBOL_ONE (level))
-	counter++;
-      if (*c == SYMBOL_FIVE (level))
-	{
-	  counter += 5;
-	  if (prev == SYMBOL_ONE (level))
-	    {
-	      prefix++;
-	      counter--;
-	    }
-	}
-
-      if (*c == SYMBOL_ONE (level + 1))
-	{
-	  counter += 10;
-	  if (prev == SYMBOL_ONE (level))
-	    {
-	      prefix++;
-	      counter--;
-	    }
-	}
-      prev = *c;
-    }
-
-  prev = 0;
-  for (c = in; *c != 0; c++)
-    {
-      if (*c == SYMBOL_ONE (level))
-	counter++;
-      if (*c == SYMBOL_FIVE (level))
-	{
-	  counter += 5;
-	  if (prev == SYMBOL_ONE (level))
-	    {
-	      prefix++;
-	      counter--;
-	    }
-	}
-      if (*c == SYMBOL_ONE (level + 1))
-	{
-	  counter += 10;
-	  if (prev == SYMBOL_ONE (level))
-	    {
-	      prefix++;
-	      counter--;
-	    }
-	}
-      prev = *c;
-    }
-  counter -= prefix;
+  counter = count_token_value (result, end - result, level);
+  counter += count_token_value (in, strlen (in), level);
 
   if ((SYMBOL_ONE (level) == 'M') && (counter > 3))
     {
@@ -213,16 +197,16 @@ add_token (char *result, char *in, int level)
       return ERROR;
     }
 /* clear this level in result */
-  c = result;
+
   resize_string (result, result - end);
 /* get number of 10s */
-  prefix = counter / 10;
-  for (i = 0; i < prefix; i++)
+  tmp = counter / 10;
+  for (i = 0; i < tmp; i++)
     {
       resize_string (result, 1);
       *result = SYMBOL_ONE (level + 1);
     }
-  result += prefix;
+  result += tmp;
 
   counter = counter % 10;
   if (counter == 9)
@@ -261,66 +245,13 @@ add_token (char *result, char *in, int level)
 int
 sub_token (char *result, char *in, char *next, int level)
 {
-  int prefix = 0;
+  int tmp = 0;
   int counter = 0;
   char *end;
-  char *c;
-  char prev = 0;
   int i;
   end = find_token_end (result, level);
-  for (c = result; c != end; c++)
-    {
-      if (*c == SYMBOL_ONE (level))
-	counter++;
-      if (*c == SYMBOL_FIVE (level))
-	{
-	  counter += 5;
-	  if (prev == SYMBOL_ONE (level))
-	    {
-	      prefix++;
-	      counter--;
-	    }
-	}
-
-      if (*c == SYMBOL_ONE (level + 1))
-	{
-	  counter += 10;
-	  if (prev == SYMBOL_ONE (level))
-	    {
-	      prefix++;
-	      counter--;
-	    }
-	}
-      prev = *c;
-    }
-
-  prev = 0;
-  for (c = in; *c != 0; c++)
-    {
-      if (*c == SYMBOL_ONE (level))
-	counter--;
-      if (*c == SYMBOL_FIVE (level))
-	{
-	  counter -= 5;
-	  if (prev == SYMBOL_ONE (level))
-	    {
-	      prefix--;
-	      counter++;
-	    }
-	}
-      if (*c == SYMBOL_ONE (level + 1))
-	{
-	  counter -= 10;
-	  if (prev == SYMBOL_ONE (level))
-	    {
-	      prefix--;
-	      counter++;
-	    }
-	}
-      prev = *c;
-    }
-
-  counter -= prefix;
+  counter = count_token_value (result, end - result, level);
+  counter -= count_token_value (in, strlen (in), level);
 
   if (counter < 0)
     {
@@ -336,16 +267,15 @@ sub_token (char *result, char *in, char *next, int level)
     *next = 0;
 
 /* clear this level in result */
-  c = result;
   resize_string (result, result - end);
 /* get number of 10s */
-  prefix = counter / 10;
-  for (i = 0; i < prefix; i++)
+  tmp = counter / 10;
+  for (i = 0; i < tmp; i++)
     {
       resize_string (result, 1);
       *result = SYMBOL_ONE (level + 1);
     }
-  result += prefix;
+  result += tmp;
 
   counter = counter % 10;
   if (counter == 9)
