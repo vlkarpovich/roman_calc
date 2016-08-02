@@ -70,11 +70,13 @@ roman_number_check (char *r_num)
 	  /* V,L,D can not be before higher number */
 	  if (rank % 2 == 0)
 	    return ERROR;
-	  /* The prefix can only odd rank 1 step lower */
+	  /* The prefix can only have odd rank by 1 step lower */
 	  if ((rank / 2 + 1) != (current_rank / 2))
 	    return ERROR;
+	  /* V,L,D can not be after number with a prefix */
+	  if (strchr (c + 2, get_char (rank + 1)))
+	    return ERROR;
 	  prefix = 1;
-
 	}
       else
 	{
