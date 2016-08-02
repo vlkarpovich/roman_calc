@@ -33,8 +33,9 @@ START_TEST (test_roman_number_check)
   /* Test for a wrong prefix */
   ck_assert_int_eq (roman_number_check ("CCID"), ERROR);
   ck_assert_int_eq (roman_number_check ("CCDXXL"), ERROR);
-  /* Test fot a prefix and a postfix at the same time */
+  /* Test for a prefix and a postfix at the same time */
   ck_assert_int_eq (roman_number_check ("CCDXLX"), ERROR);
+  ck_assert_int_eq (roman_number_check ("IXV"), ERROR);
 }
 END_TEST
 
