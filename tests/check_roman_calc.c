@@ -20,8 +20,11 @@ teardown (void)
 
 START_TEST (test_roman_number_check)
 {
+  /* Test for correct symbols */
   ck_assert_int_eq (roman_number_check ("MDCCLXXVII"), SUCCESS);
   ck_assert_int_eq (roman_number_check ("MCLXXVII1"), ERROR);
+  /* Test for more than 3 symbols in a row */
+  ck_assert_int_eq (roman_number_check ("IIII"), ERROR);
 }
 END_TEST
 
