@@ -63,6 +63,11 @@ roman_number_check (const char *roman_number)
          It must be a prefix */
       else if (rank < prev_rank)
 	{
+	  /* Check for prefix is not a level five symbol */
+	  if (is_symbol_level_five (rank))
+	    {
+	      return ERROR;
+	    }
 	  /* Check for prefix and postfix at the same time */
 	  if ((count > 1) || prefix)
 	    {

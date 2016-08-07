@@ -29,6 +29,8 @@ START_TEST (test_roman_number_check)
   ck_assert_int_eq (roman_number_check ("XVV"), ERROR);
   /* Test for a prefix and postfix at the same time */
   ck_assert_int_eq (roman_number_check ("IXV"), ERROR);
+  /* Test if the prefix is V,L or D */
+  ck_assert_int_eq (roman_number_check ("DMVX"), ERROR);
 }
 END_TEST
 
