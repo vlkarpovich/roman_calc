@@ -60,6 +60,8 @@ START_TEST (test_roman_number_sub)
   ck_assert_str_eq (roman_number_sub ("II", "I", result), "I");
   /* Subtract a small number from a large number */
   ck_assert_str_eq (roman_number_sub ("MMM", "I", result), "MMCMXCIX");
+  /* Use large numbers */
+  ck_assert_str_eq (roman_number_sub ("MMDCCXLIII", "MCCXLIX", result), "MCDXCIV");
 }
 END_TEST
 
