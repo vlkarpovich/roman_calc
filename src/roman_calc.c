@@ -3,13 +3,19 @@
 #include "roman_calc.h"
 
 /* Find sequence number of a char in string of allowed Roman symbols */
-
 int
 get_rank (const char chr)
 {
   char *c;
   c = strchr (RomanSymbols, chr);
   return (c ? (c - RomanSymbols + 1) : 0);
+}
+
+/* Check if a symbol is V,L or D */
+int
+is_symbol_level_five (int rank)
+{
+  return (!(rank % 2));
 }
 
 int
@@ -38,9 +44,16 @@ roman_number_check (const char *roman_number)
       /* Previous and current symbols are the same */
       if (rank == prev_rank)
 	{
+	  /* no more than 1 level 5 symbols (V,L,D) in a row */
+	  if (is_symbol_level_five (rank))
+	    {
+	      return ERROR;
+	    }
 	  /* no more than 3 symbols in a row */
 	  if (postfix == 3)
-	    return ERROR;
+	    {
+	      return ERROR;
+	    }
 	  postfix++;
 	}
       else

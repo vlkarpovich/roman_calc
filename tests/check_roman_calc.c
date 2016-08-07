@@ -25,6 +25,8 @@ START_TEST (test_roman_number_check)
   ck_assert_int_eq (roman_number_check ("MCLXXVII1"), ERROR);
   /* Test for more than 3 symbols in a row */
   ck_assert_int_eq (roman_number_check ("IIII"), ERROR);
+  /* Test for more than 1 of V,L,D in a row */
+  ck_assert_int_eq (roman_number_check ("XVV"), ERROR);
 }
 END_TEST
 
