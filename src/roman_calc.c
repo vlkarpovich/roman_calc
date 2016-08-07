@@ -282,6 +282,37 @@ add_token (char *result, char *in, int level)
   return (counter_to_roman (result, counter, level));
 }
 
+/* Subtract a token from a string with Roman numerical
+*/
+int
+subtract_token (char *result, char *in, char *next, int level)
+{
+  int tmp = 0;
+  int counter = 0;
+  char *end;
+  int i;
+  /* Find end of a token in accomulator */
+  end = find_token_end (result, level);
+  /* Calculate value of the token in accomulator */
+  counter = count_token_value (result, end - result, level);
+  /* Calculate value of second token and subtract it from the counter */
+  counter -= count_token_value (in, strlen (in), level);
+
+  if (counter < 0)
+    {
+      *next = SYMBOL_ONE (level + 1);
+      counter = 10 + counter;
+    }
+  else if (*next != SYMBOL_ONE (level + 1))
+    *next = 0;
+
+  /* Remove symbols in current range level from the accomulator string */
+  resize_string (result, result - end);
+  /* Convert counter to Roman symbols and add them to the accomulator */
+  return (counter_to_roman (result, counter, level));
+
+}
+
 /* Addition of 2 string with roman numerical.
  The function splits the number in tokens containing symbols responsible
  for the same value range, aka 1,10,100 and 1000.
@@ -321,11 +352,31 @@ roman_number_add (const char *number_1, const char *number_2, char *result)
 char *
 roman_number_sub (const char *number_1, const char *number_2, char *result)
 {
+  int i;
+  char token[ROMAN_NUM_MAX_LEN];
+  char next;
+
   if (!number_1 || !number_2 || !result)
     {
       return NULL;
     }
-  *result = 'I';
-  *(result + 1) = 0;
+
+  *token = 0;
+  *result = 0;
+
+  for (i = 0; i <= ROMAN_SYMBOLS_NUM / 2; i++)
+    {
+      get_token (number_1, token, i);
+      if (add_token (result, token, i) == ERROR)
+	break;
+      *token = next;
+      *(token + 1) = 0;
+      if (subtract_token (result, token, &next, i) == ERROR)
+	break;
+      get_token (number_2, token, i);
+      if (subtract_token (result, token, &next, i) == ERROR)
+	break;
+
+    }
   return result;
 }
