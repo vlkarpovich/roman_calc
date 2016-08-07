@@ -315,3 +315,17 @@ roman_number_add (const char *number_1, const char *number_2, char *result)
     }
   return result;
 }
+
+/* Subtraction of a string with roman numerical from other string.
+*/
+char *
+roman_number_sub (const char *number_1, const char *number_2, char *result)
+{
+  if (!number_1 || !number_2 || !result)
+    {
+      return NULL;
+    }
+  *result = 'I';
+  *(result + 1) = 0;
+  return result;
+}

@@ -54,6 +54,13 @@ START_TEST (test_roman_number_add)
 }
 END_TEST
 
+START_TEST (test_roman_number_sub)
+{
+  /* Simple test */
+  ck_assert_str_eq (roman_number_sub ("II", "I", result), "I");
+}
+END_TEST
+
 Suite * roman_calc_suite (void)
 {
   Suite *s = suite_create ("RomanCalc");
@@ -69,6 +76,12 @@ Suite * roman_calc_suite (void)
   tcase_add_checked_fixture (tc_roman_add, setup, teardown);
   tcase_add_test (tc_roman_add, test_roman_number_add);
   suite_add_tcase (s, tc_roman_add);
+
+  /* Subtraction test cases */
+  TCase *tc_roman_sub = tcase_create ("Sub");
+  tcase_add_checked_fixture (tc_roman_sub, setup, teardown);
+  tcase_add_test (tc_roman_sub, test_roman_number_sub);
+  suite_add_tcase (s, tc_roman_sub);
 
   return s;
 }

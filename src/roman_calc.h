@@ -13,4 +13,5 @@ static const char RomanSymbols[] = "IVXLCDM";
 
 int roman_number_check (const char *roman_number);
 char *roman_number_add (const char *number1, const char *number2, char *result);
+char *roman_number_sub (const char *number1, const char *number2, char *result);
 #endif /* ROMAN_CALC_H */
