@@ -12,9 +12,10 @@ setup (void)
 void
 teardown (void)
 {
-  if (result) {
-    free (result);
-  }
+  if (result)
+    {
+      free (result);
+    }
   result = NULL;
 }
 
@@ -42,8 +43,11 @@ START_TEST (test_roman_number_add)
 {
   /* Simple test */
   ck_assert_str_eq (roman_number_add ("MLX", "VI", result), "MLXVI");
+  /*  Test addition of bigger number to smaller */
+  ck_assert_str_eq (roman_number_add ("VI", "MDCLX", result), "MDCLXVI");
 }
 END_TEST
+
 Suite * roman_calc_suite (void)
 {
   Suite *s = suite_create ("RomanCalc");

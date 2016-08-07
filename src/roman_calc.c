@@ -3,6 +3,8 @@
 #include "roman_calc.h"
 
 #define BASE10(var) ((var-1)/2)
+#define SYMBOL_ONE(level)  RomanSymbols[(level)*2]
+#define SYMBOL_FIVE(level)  RomanSymbols[(level)*2+1]
 
 /* Find sequence number of a char in string of allowed Roman symbols */
 int
@@ -101,20 +103,114 @@ roman_number_check (const char *roman_number)
   return SUCCESS;
 }
 
+/* Walk a string to find the end of the symbols sequnce in a range ( level )
+  for example find the first symbol after  C,D & M in MDCXIV  = XIV
+*/
 
+char *
+find_token_end (char *in, int level)
+{
+  char pattern[4];
+  char *end;
+  if (level)
+    {
+      pattern[0] = SYMBOL_ONE (level);
+      pattern[1] = SYMBOL_FIVE (level);
+      pattern[2] = SYMBOL_ONE (level + 1);
+      pattern[3] = 0;
+      end = in + strspn (in, pattern);
+    }
+  else
+    end = in + strlen (in);
+  return end;
+}
+
+/* Search the input for first appearance of 1 & 5 symbols */
+char *
+find_token_start (const char *in, int level)
+{
+  char pattern[3];
+
+  pattern[0] = SYMBOL_ONE (level);
+  pattern[1] = SYMBOL_FIVE (level);
+  pattern[2] = 0;
+
+  return strpbrk (in, pattern);
+}
+
+/* Find a substring (token) with symbols with the same decimal base level.
+   Place the token in the out string.
+*/
+void
+get_token (const char *in, char *out, int level)
+{
+  char *start = NULL;
+  char *end = NULL;
+  int size = 0;
+
+  *out = 0;
+  start = find_token_start (in, level);
+  if (start)
+    {
+      end = find_token_end (start, level);
+      size = end - start;
+      strncpy (out, start, size);
+      out[size] = 0;
+    }
+}
+
+/* Remove symbols or insert empty space in a string
+*/
+void
+resize_string (char *str, int size)
+{
+  if (size > 0)
+    memmove (str + size, str, strlen (str) + 1);
+  else
+    memmove (str, str - size, strlen (str) + 1);
+}
+
+/* Add a token to a string with Roman numerical
+*/
+int
+add_token (char *result, char *in, int level)
+{
+  /* Insert input in result string */
+  resize_string (result, strlen (in));
+  memcpy (result, in, strlen (in));
+  return (SUCCESS);
+}
 
 /* Addition of 2 string with roman numerical.
-
+ The function splits the number in tokens containing symbols responsible
+ for the same value range, aka 1,10,100 and 1000.
+ Then it adds token one by one.
 */
 char *
-roman_number_add (const char *number_1, const char *number_2,
-		  char *result)
+roman_number_add (const char *number_1, const char *number_2, char *result)
 {
+  int i;
+  char token[ROMAN_NUM_MAX_LEN];
   if (!number_1 || !number_2 || !result)
     {
       return NULL;
     }
 
-  sprintf (result, "%s%s", number_1, number_2);
+  *token = 0;
+  *result = 0;
+  for (i = 0; i <= ROMAN_SYMBOLS_NUM / 2; i++)
+    {
+      get_token (number_1, token, i);
+      if (add_token (result, token, i) == ERROR)
+	{
+	  break;
+	}
+      *token = 0;
+      get_token (number_2, token, i);
+      if (add_token (result, token, i) == ERROR)
+	{
+	  break;
+	}
+    }
   return result;
 }
