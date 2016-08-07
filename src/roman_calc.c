@@ -384,5 +384,10 @@ roman_number_sub (const char *number_1, const char *number_2, char *result)
 	break;
 
     }
+  /* Handle 0 value. Set ZERO word in the result */
+  if (*result == 0)
+    {
+      strcpy (result, ZERO);
+    }
   return result;
 }

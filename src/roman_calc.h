@@ -4,6 +4,7 @@
 #define SUCCESS  0
 #define ERROR    1
 
+#define ZERO     "Nulla"
 #define INFINITY "Infinitas"
 #define NEGATIVE "Negativa"
 
