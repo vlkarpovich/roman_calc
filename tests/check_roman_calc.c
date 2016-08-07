@@ -45,6 +45,8 @@ START_TEST (test_roman_number_add)
   ck_assert_str_eq (roman_number_add ("MLX", "VI", result), "MLXVI");
   /*  Test addition of bigger number to smaller */
   ck_assert_str_eq (roman_number_add ("VI", "MDCLX", result), "MDCLXVI");
+  /* If the numeral is I,X or C you can't have more than three */
+  ck_assert_str_eq (roman_number_add ("II", "II", result), "IV");
 }
 END_TEST
 

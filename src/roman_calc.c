@@ -170,15 +170,103 @@ resize_string (char *str, int size)
     memmove (str, str - size, strlen (str) + 1);
 }
 
+/* Count value of the token.
+*/
+int
+count_token_value (char *in, int size, int level)
+{
+  char *c;
+  char prev = 0;
+  int value = 0;
+
+  for (c = in; c < in + size; c++)
+    {
+      value += (*c == SYMBOL_ONE (level)) ? 1 : 0;
+      if (*c == SYMBOL_FIVE (level))
+	{
+	  value += 5;
+	  value -= (prev == SYMBOL_ONE (level)) ? 2 : 0;
+	}
+
+      if (*c == SYMBOL_ONE (level + 1))
+	{
+	  value += 10;
+	  value -= (prev == SYMBOL_ONE (level)) ? 2 : 0;
+	}
+      prev = *c;
+    }
+  return value;
+}
+
+/* Convert token value to a roman symbol sequence.
+  Place it in the result string
+*/
+int
+counter_to_roman (char *result, int value, int level)
+{
+  int tmp = 0;
+  int i;
+/* get number of 10s */
+  tmp = value / 10;
+  for (i = 0; i < tmp; i++)
+    {
+      resize_string (result, 1);
+      *result = SYMBOL_ONE (level + 1);
+    }
+  result += tmp;
+
+  value = value % 10;
+  if (value == 9)
+    {
+      resize_string (result, 2);
+      *result = SYMBOL_ONE (level);
+      *(result + 1) = SYMBOL_ONE (level + 1);
+    }
+  else
+    {
+      if (value / 5)
+	{
+	  resize_string (result, 1);
+	  *result = SYMBOL_FIVE (level);
+	  result++;
+	}
+      value = value % 5;
+      if (value == 4)
+	{
+	  resize_string (result, 2);
+	  *result = SYMBOL_ONE (level);
+	  *(result + 1) = SYMBOL_FIVE (level);
+	}
+      else
+	{
+	  for (i = 0; i < value; i++)
+	    {
+	      resize_string (result, 1);
+	      *result = SYMBOL_ONE (level);
+	    }
+	}
+    }
+  return SUCCESS;
+}
+
 /* Add a token to a string with Roman numerical
 */
 int
 add_token (char *result, char *in, int level)
 {
-  /* Insert input in result string */
-  resize_string (result, strlen (in));
-  memcpy (result, in, strlen (in));
-  return (SUCCESS);
+  int counter = 0;
+  char *end;
+
+  /* Find end of a token in accomulator ( result ) */
+  end = find_token_end (result, level);
+  /* Calculate value of the token in accomulator */
+  counter = count_token_value (result, end - result, level);
+  /* Calculate value of second token and add it to the counter */
+  counter += count_token_value (in, strlen (in), level);
+  /* Remove symbols in current range level from the accomulator string */
+  resize_string (result, result - end);
+  /* Convert counter to Roman symbols and add them to the accomulator */
+  return (counter_to_roman (result, counter, level));
 }
 
 /* Addition of 2 string with roman numerical.
