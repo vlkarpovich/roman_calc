@@ -270,6 +270,12 @@ add_token (char *result, char *in, int level)
   counter = count_token_value (result, end - result, level);
   /* Calculate value of second token and add it to the counter */
   counter += count_token_value (in, strlen (in), level);
+  /* Handle an overload problem. Return infinity value */
+  if ((SYMBOL_ONE (level) == 'M') && (counter > 3))
+    {
+      strcpy (result, INFINITY);
+      return ERROR;
+    }
   /* Remove symbols in current range level from the accomulator string */
   resize_string (result, result - end);
   /* Convert counter to Roman symbols and add them to the accomulator */

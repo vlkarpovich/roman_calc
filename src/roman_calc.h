@@ -4,6 +4,8 @@
 #define SUCCESS  0
 #define ERROR    1
 
+#define INFINITY "Infinitas"
+
 #define ROMAN_NUM_MAX_LEN 20
 #define ROMAN_SYMBOLS_NUM  7
 

@@ -49,6 +49,8 @@ START_TEST (test_roman_number_add)
   ck_assert_str_eq (roman_number_add ("II", "II", result), "IV");
  /* Add large numbers */
   ck_assert_str_eq (roman_number_add ("MDCCXLIII", "MCIX", result), "MMDCCCLII");
+ /* The result is bigger than Romans can count */
+  ck_assert_str_eq (roman_number_add ("MMDCCXLIII", "MDCCXLIII", result), INFINITY);
 }
 END_TEST
 
