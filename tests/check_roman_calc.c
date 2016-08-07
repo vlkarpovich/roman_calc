@@ -33,6 +33,8 @@ START_TEST (test_roman_number_check)
   ck_assert_int_eq (roman_number_check ("DMVX"), ERROR);
   /* Test for prefix for a symbol if in the same range */
   ck_assert_int_eq (roman_number_check ("CCID"), ERROR);
+  /* Test if prefix of a symbol is not the same range as postfix */
+  ck_assert_int_eq (roman_number_check ("CMV"), SUCCESS);
 }
 END_TEST
 

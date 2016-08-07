@@ -70,8 +70,13 @@ roman_number_check (const char *roman_number)
 	    {
 	      return ERROR;
 	    }
-	  /* Check for prefix and postfix at the same time */
-	  if ((count > 1) || prefix)
+	  /* Check if prefix is already set */
+	  if (prefix)
+	    {
+	      return ERROR;
+	    }
+	  /* if postfix is in the same decimal base */
+	  if ((count > 1) && (BASE10 (rank) == BASE10 (get_rank (*(c + 2)))))
 	    {
 	      return ERROR;
 	    }
