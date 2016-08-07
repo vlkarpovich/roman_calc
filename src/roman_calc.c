@@ -152,6 +152,13 @@ get_token (const char *in, char *out, int level)
   start = find_token_start (in, level);
   if (start)
     {
+      if ((in != start) && (*(start - 1) == SYMBOL_ONE (level - 1)))
+	{
+	  /* This is symbol with prefix from lower level. That
+	     token belongs to different level */
+	  *out = 0;
+	  return;
+	}
       end = find_token_end (start, level);
       size = end - start;
       strncpy (out, start, size);
