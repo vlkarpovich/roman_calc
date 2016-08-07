@@ -62,6 +62,8 @@ START_TEST (test_roman_number_sub)
   ck_assert_str_eq (roman_number_sub ("MMM", "I", result), "MMCMXCIX");
   /* Use large numbers */
   ck_assert_str_eq (roman_number_sub ("MMDCCXLIII", "MCCXLIX", result), "MCDXCIV");
+  /* Test for a negative result */
+  ck_assert_str_eq (roman_number_sub ("XIX", "CXC", result), NEGATIVE);
 }
 END_TEST
 

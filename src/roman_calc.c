@@ -300,6 +300,12 @@ subtract_token (char *result, char *in, char *next, int level)
 
   if (counter < 0)
     {
+      /* Handle negative value. Set NEGATIVE word in the result and return error */
+      if (SYMBOL_ONE (level) == 'M')
+	{
+	  strcpy (result, NEGATIVE);
+	  return ERROR;
+	}
       *next = SYMBOL_ONE (level + 1);
       counter = 10 + counter;
     }

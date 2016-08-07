@@ -5,6 +5,7 @@
 #define ERROR    1
 
 #define INFINITY "Infinitas"
+#define NEGATIVE "Negativa"
 
 #define ROMAN_NUM_MAX_LEN 20
 #define ROMAN_SYMBOLS_NUM  7
