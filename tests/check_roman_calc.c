@@ -31,6 +31,8 @@ START_TEST (test_roman_number_check)
   ck_assert_int_eq (roman_number_check ("IXV"), ERROR);
   /* Test if the prefix is V,L or D */
   ck_assert_int_eq (roman_number_check ("DMVX"), ERROR);
+  /* Test for prefix for a symbol if in the same range */
+  ck_assert_int_eq (roman_number_check ("CCID"), ERROR);
 }
 END_TEST
 

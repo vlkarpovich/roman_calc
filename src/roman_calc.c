@@ -2,6 +2,8 @@
 #include <string.h>
 #include "roman_calc.h"
 
+#define BASE10(var) ((var-1)/2)
+
 /* Find sequence number of a char in string of allowed Roman symbols */
 int
 get_rank (const char chr)
@@ -70,6 +72,12 @@ roman_number_check (const char *roman_number)
 	    }
 	  /* Check for prefix and postfix at the same time */
 	  if ((count > 1) || prefix)
+	    {
+	      return ERROR;
+	    }
+	  /* The prefix can only have 1 base 10 step lower
+	     CM  is OK , XM is not valid */
+	  if ((BASE10 (rank) + 1) != (BASE10 (prev_rank)))
 	    {
 	      return ERROR;
 	    }
