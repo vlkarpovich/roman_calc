@@ -25,6 +25,8 @@ roman_number_check (const char *roman_number)
   int rank = 0;
   int prev_rank = 0;
   int postfix = 0;
+  int prefix = 0;
+  int count = 0;
 
   if (!roman_number)
     {
@@ -55,10 +57,25 @@ roman_number_check (const char *roman_number)
 	      return ERROR;
 	    }
 	  postfix++;
+	  count++;
+	}
+      /* Rank of the current symbol is smaller than the previos one.
+         It must be a prefix */
+      else if (rank < prev_rank)
+	{
+	  /* Check for prefix and postfix at the same time */
+	  if ((count > 1) || prefix)
+	    {
+	      return ERROR;
+	    }
+	  prefix = 1;
+	  count = 0;
 	}
       else
 	{
+	  prefix = 0;
 	  postfix = 1;
+	  count++;
 	}
       prev_rank = rank;
     }
