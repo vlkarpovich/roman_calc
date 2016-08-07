@@ -100,3 +100,21 @@ roman_number_check (const char *roman_number)
   while (c-- != roman_number);
   return SUCCESS;
 }
+
+
+
+/* Addition of 2 string with roman numerical.
+
+*/
+char *
+roman_number_add (const char *number_1, const char *number_2,
+		  char *result)
+{
+  if (!number_1 || !number_2 || !result)
+    {
+      return NULL;
+    }
+
+  sprintf (result, "%s%s", number_1, number_2);
+  return result;
+}
