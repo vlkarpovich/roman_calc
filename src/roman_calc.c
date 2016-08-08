@@ -84,7 +84,8 @@ roman_number_check (const char *roman_number)
 	    }
 	  /* The prefix can only have 1 base 10 step lower
 	     CM  is OK , XM is not valid */
-	  if ((BASE10 (rank) + 1) != (BASE10 (prev_rank)))
+	  if ((BASE10 (rank) + 1) != (BASE10 (prev_rank))
+	      && (BASE10 (rank) != BASE10 (prev_rank)))
 	    {
 	      return ERROR;
 	    }
