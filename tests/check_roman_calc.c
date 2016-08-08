@@ -70,6 +70,8 @@ START_TEST (test_roman_number_sub)
   ck_assert_str_eq (roman_number_sub ("XIX", "CXC", result), NEGATIVE);
   /* Check for the zero value result */
   ck_assert_str_eq (roman_number_sub ("MCMXCIV", "MCMXCIV", result), ZERO);
+ /* Test insane input values */
+  ck_assert_ptr_eq ((void*)roman_number_sub ("", "BADNUMBER", result), NULL );
 }
 END_TEST
 

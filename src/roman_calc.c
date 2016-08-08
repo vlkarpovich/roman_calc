@@ -365,7 +365,9 @@ roman_number_sub (const char *number_1, const char *number_2, char *result)
   char token[ROMAN_NUM_MAX_LEN];
   char next;
 
-  if (!number_1 || !number_2 || !result)
+  if (!result ||
+      (roman_number_check (number_1) == ERROR) ||
+      (roman_number_check (number_2) == ERROR))
     {
       return NULL;
     }
