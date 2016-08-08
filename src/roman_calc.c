@@ -279,6 +279,17 @@ add_token (char *result, char *in, int level)
     }
   /* Remove symbols in current range level from the accomulator string */
   resize_string (result, result - end);
+  /* Check for an unlikely event of output buffer overrun
+     Roman Number result buffer size is 20.
+     Max size of one base 10 step is 4.
+     There is 4 steps for numbers for 1 to 1000.
+     (ROMAN_TOKEN_MAX * 4 = 16) < (ROMAN_NUM_MAX_LEN = 20)
+   */
+  if ((strlen (result) + ROMAN_TOKEN_MAX) > ROMAN_NUM_MAX_LEN)
+    {
+      *result = 0;
+      return ERROR;
+    }
   /* Convert counter to Roman symbols and add them to the accomulator */
   return (counter_to_roman (result, counter, level));
 }
@@ -315,6 +326,17 @@ subtract_token (char *result, char *in, char *next, int level)
 
   /* Remove symbols in current range level from the accomulator string */
   resize_string (result, result - end);
+  /* Check for an unlikely event of output buffer overrun
+     Roman Number result buffer size is 20.
+     Max size of one base 10 step is 4.
+     There is 4 steps for numbers for 1 to 1000.
+     (ROMAN_TOKEN_MAX * 4 = 16) < (ROMAN_NUM_MAX_LEN = 20)
+   */
+  if ((strlen (result) + ROMAN_TOKEN_MAX) > ROMAN_NUM_MAX_LEN)
+    {
+      *result = 0;
+      return ERROR;
+    }
   /* Convert counter to Roman symbols and add them to the accomulator */
   return (counter_to_roman (result, counter, level));
 

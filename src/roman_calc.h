@@ -10,6 +10,7 @@
 
 #define ROMAN_NUM_MAX_LEN 20
 #define ROMAN_SYMBOLS_NUM  7
+#define ROMAN_TOKEN_MAX 4
 
 static const char RomanSymbols[] = "IVXLCDM";
 

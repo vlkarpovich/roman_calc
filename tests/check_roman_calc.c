@@ -49,12 +49,12 @@ START_TEST (test_roman_number_add)
   ck_assert_str_eq (roman_number_add ("VI", "MDCLX", result), "MDCLXVI");
   /* If the numeral is I,X or C you can't have more than three */
   ck_assert_str_eq (roman_number_add ("II", "II", result), "IV");
- /* Add large numbers */
+  /* Add large numbers */
   ck_assert_str_eq (roman_number_add ("MDCCXLIII", "MCIX", result), "MMDCCCLII");
- /* The result is bigger than Romans can count */
+  /* The result is bigger than Romans can count */
   ck_assert_str_eq (roman_number_add ("MMDCCXLIII", "MDCCXLIII", result), INFINITY);
- /* Test insane input values */
-  ck_assert_ptr_eq ((void*)roman_number_add ("MMDCIIIIIS","IDDFFSSII", result), NULL );
+  /* Test insane input values */
+  ck_assert_ptr_eq ((void *) roman_number_add ("MMDCIIIIIS", "IDDFFSSII", result), NULL);
 }
 END_TEST
 
@@ -70,8 +70,13 @@ START_TEST (test_roman_number_sub)
   ck_assert_str_eq (roman_number_sub ("XIX", "CXC", result), NEGATIVE);
   /* Check for the zero value result */
   ck_assert_str_eq (roman_number_sub ("MCMXCIV", "MCMXCIV", result), ZERO);
- /* Test insane input values */
-  ck_assert_ptr_eq ((void*)roman_number_sub ("", "BADNUMBER", result), NULL );
+  /* Test insane input values */
+  ck_assert_ptr_eq ((void *) roman_number_sub ("", "BADNUMBER", result), NULL);
+  /* Test insane input values */
+  ck_assert_ptr_eq ((void *)
+		    roman_number_sub ("MMMDDDDCCCCCCCCXXXXXXXLLLLLIIIIIIIIII",
+				      "IVXLDCMMMCDLXVIIVXLDCMMMCDLXVIIVXLDCMMMCDLXVI",
+				      result), NULL);
 }
 END_TEST
 
