@@ -53,6 +53,8 @@ START_TEST (test_roman_number_add)
   ck_assert_str_eq (roman_number_add ("MDCCXLIII", "MCIX", result), "MMDCCCLII");
  /* The result is bigger than Romans can count */
   ck_assert_str_eq (roman_number_add ("MMDCCXLIII", "MDCCXLIII", result), INFINITY);
+ /* Test insane input values */
+  ck_assert_ptr_eq ((void*)roman_number_add ("MMDCIIIIIS","IDDFFSSII", result), NULL );
 }
 END_TEST
 

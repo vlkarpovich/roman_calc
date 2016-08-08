@@ -330,7 +330,9 @@ roman_number_add (const char *number_1, const char *number_2, char *result)
 {
   int i;
   char token[ROMAN_NUM_MAX_LEN];
-  if (!number_1 || !number_2 || !result)
+  if (!result ||
+      (roman_number_check (number_1) == ERROR) ||
+      (roman_number_check (number_2) == ERROR))
     {
       return NULL;
     }
